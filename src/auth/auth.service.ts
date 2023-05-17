@@ -1,7 +1,14 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
+import { verify } from 'argon2';
 import { CreateUserDto } from 'src/users/dto/create-user.dto';
 import { UsersService } from 'src/users/users.service';
+import { AuthDto } from './dto/auth.dto';
 
 @Injectable()
 export class AuthService {
@@ -9,8 +16,14 @@ export class AuthService {
     private readonly usersService: UsersService,
     private readonly jwt: JwtService,
   ) {}
-  async login() {
-    return 'test';
+  async login(dto: AuthDto) {
+    const user = await this.validateUser(dto);
+    const tokens = await this.issueTokens(user.id);
+
+    return {
+      user,
+      ...tokens,
+    };
   }
   async register(dto: CreateUserDto) {
     const oldUser = await this.usersService.findByEmail(dto.email);
@@ -40,5 +53,16 @@ export class AuthService {
       },
     );
     return { accessToken, refreshToken };
+  }
+  private async validateUser(dto: AuthDto) {
+    const user = await this.usersService.findByEmail(dto.email);
+
+    if (!user) throw new NotFoundException('User not found');
+
+    const isValid = await verify(user.password, dto.password);
+
+    if (!isValid) throw new UnauthorizedException('Invalid password');
+
+    return user;
   }
 }

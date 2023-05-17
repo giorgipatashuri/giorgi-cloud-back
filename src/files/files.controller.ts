@@ -1,6 +1,8 @@
 import {
   Controller,
   Post,
+  Get,
+  UseGuards,
   UploadedFile,
   UseInterceptors,
 } from '@nestjs/common';
@@ -8,8 +10,10 @@ import { FilesService } from './files.service';
 
 import { FileInterceptor } from '@nestjs/platform-express';
 import { fileStorage } from './storage';
+import { JwtAuthGuard } from 'src/auth/guards/jwt.guard';
 
 @Controller('files')
+@UseGuards(JwtAuthGuard)
 export class FilesController {
   constructor(private readonly filesService: FilesService) {}
 
@@ -19,7 +23,11 @@ export class FilesController {
       storage: fileStorage,
     }),
   )
-  create(@UploadedFile() file: Express.Multer.File) {
+  async create(@UploadedFile() file: Express.Multer.File) {
     return file;
+  }
+  @Get()
+  async findAll() {
+    return this.filesService.findAll();
   }
 }
