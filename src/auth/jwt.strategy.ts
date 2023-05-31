@@ -9,13 +9,16 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
   constructor(private readonly usersService: UsersService) {
     super({
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
-      ignoreExpiration: true,
+      ignoreExpiration: false,
       secretOrKey: process.env.JWT_SECRET,
     });
   }
-  // { id }: Pick<User, 'id'>
-  async validate({ userId }: Pick<File, 'userId'>) {
-    const user = await this.usersService.findById(userId);
+
+  // >
+  async validate({ id }: Pick<User, 'id'>) {
+    console.log(id);
+    console.log('Test', id);
+    const user = await this.usersService.findById(id);
     return user;
   }
 }

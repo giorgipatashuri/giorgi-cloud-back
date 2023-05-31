@@ -8,4 +8,15 @@ export class FilesService {
   async findAll() {
     return this.prisma.file.findMany();
   }
+  async create(file: Express.Multer.File, userId: number) {
+    return this.prisma.file.create({
+      data: {
+        filename: file.filename,
+        originalName: file.originalname,
+        size: file.size,
+        mimetype: file.mimetype,
+        userId: userId,
+      },
+    });
+  }
 }

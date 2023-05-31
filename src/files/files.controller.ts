@@ -11,6 +11,7 @@ import { FilesService } from './files.service';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { fileStorage } from './storage';
 import { JwtAuthGuard } from 'src/auth/guards/jwt.guard';
+import { User } from 'src/decorators/user.decorator';
 
 @Controller('files')
 @UseGuards(JwtAuthGuard)
@@ -23,8 +24,11 @@ export class FilesController {
       storage: fileStorage,
     }),
   )
-  async create(@UploadedFile() file: Express.Multer.File) {
-    return file;
+  async create(
+    @UploadedFile() file: Express.Multer.File,
+    @User('id') id: number,
+  ) {
+    return this.filesService.create(file, id);
   }
   @Get()
   async findAll() {

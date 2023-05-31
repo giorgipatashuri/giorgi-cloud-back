@@ -41,13 +41,13 @@ export class AuthService {
   }
   private async issueTokens(userId: number) {
     const accessToken = this.jwt.sign(
-      { userId },
+      { id: userId },
       {
         expiresIn: '1h',
       },
     );
     const refreshToken = this.jwt.sign(
-      { userId },
+      { id: userId },
       {
         expiresIn: '7h',
       },
