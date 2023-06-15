@@ -1,5 +1,4 @@
 import { Injectable } from '@nestjs/common';
-import { Prisma } from '@prisma/client';
 import { PrismaService } from 'src/prisma.service';
 export enum FileType {
   PHOTOS = 'photos',
@@ -10,7 +9,7 @@ export class FilesService {
   constructor(private readonly prisma: PrismaService) {}
 
   async findAll(userId: number, fileType: FileType) {
-    let where: Prisma.FileWhereInput = { userId };
+    let where: any = { userId };
 
     if (fileType === FileType.PHOTOS) {
       where = { ...where, mimetype: { contains: 'image' } };
