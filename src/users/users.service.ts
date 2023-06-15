@@ -11,11 +11,12 @@ export class UsersService {
   async findByEmail(email: string) {
     return this.prisma.user.findUnique({
       where: {
-        email,
+        email: email,
       },
     });
   }
   async findById(id: number) {
+    console.log(id);
     return this.prisma.user.findUnique({
       where: {
         id,

@@ -14,10 +14,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     });
   }
 
-  // >
   async validate({ id }: Pick<User, 'id'>) {
-    console.log(id);
-    console.log('Test', id);
     const user = await this.usersService.findById(id);
     return user;
   }

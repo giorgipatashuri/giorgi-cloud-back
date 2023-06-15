@@ -5,8 +5,9 @@ import {
   UseGuards,
   UploadedFile,
   UseInterceptors,
+  Query,
 } from '@nestjs/common';
-import { FilesService } from './files.service';
+import { FileType, FilesService } from './files.service';
 
 import { FileInterceptor } from '@nestjs/platform-express';
 import { fileStorage } from './storage';
@@ -31,7 +32,7 @@ export class FilesController {
     return this.filesService.create(file, id);
   }
   @Get()
-  async findAll() {
-    return this.filesService.findAll();
+  async findAll(@User('id') id: number, @Query('type') fileType: FileType) {
+    return this.filesService.findAll(id, fileType);
   }
 }
